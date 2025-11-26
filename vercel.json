@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "public": "public",
   "routes": [
     { "src": "/a2r", "dest": "/api/a2r.js" },
     { "src": "/r2a", "dest": "/api/r2a.js" }
