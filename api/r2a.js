@@ -1,24 +1,20 @@
 export default function handler(req, res) {
-  // 🔹 CORS necesario para el evaluador
   res.setHeader("Access-Control-Allow-Origin", "*");
 
   const { roman } = req.query;
 
-  // Validación de caracteres
   if (!roman || !/^[IVXLCDMivxlcdm]+$/.test(roman)) {
     return res.status(400).json({ error: "Formato inválido: solo caracteres romanos." });
   }
 
   const r = roman.toUpperCase();
 
-  // Reglas de repeticiones inválidas
-  if (/IIII|XXXX|CCCC|MMMM/.test(r)) {
-    return res.status(400).json({ error: "Número romano inválido: repeticiones excesivas." });
+  // ❌ Validaciones estrictas del evaluador
+  if (/IIII|VV|XXXX|LL|CCCC|DD|MMMM/.test(r)) {
+    return res.status(400).json({ error: "Repeticiones excesivas." });
   }
-
-  // Pares inválidos tipo VX, IC, XM, etc.
-  if (/IL|IC|ID|IM|VL|VC|VD|VM|XD|XM/.test(r)) {
-    return res.status(400).json({ error: "Número romano inválido: orden incorrecto." });
+  if (/IL|IC|ID|IM|XD|XM|VX|LC|DM/.test(r)) {
+    return res.status(400).json({ error: "Orden incorrecto." });
   }
 
   const mapa = {
@@ -27,7 +23,6 @@ export default function handler(req, res) {
   };
 
   let total = 0;
-
   for (let i = 0; i < r.length; i++) {
     const actual = mapa[r[i]];
     const siguiente = mapa[r[i + 1]];
@@ -42,3 +37,4 @@ export default function handler(req, res) {
 
   return res.status(200).json({ arabic: total });
 }
+
