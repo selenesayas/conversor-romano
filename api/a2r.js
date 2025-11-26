@@ -1,33 +1,35 @@
-function arabigoARomano(num) {
-  if (!Number.isInteger(num) || num <= 0) {
-    throw new Error("Solo enteros positivos mayores a 0");
+module.exports = (req, res) => {
+  const num = parseInt(req.query.num);
+  if (isNaN(num) || num < 1 || num > 3999) {
+    return res.status(400).json({ error: "Número inválido" });
   }
 
-  const valores = [
-    { val: 1000, rom: 'M' },
-    { val: 900, rom: 'CM' },
-    { val: 500, rom: 'D' },
-    { val: 400, rom: 'CD' },
-    { val: 100, rom: 'C' },
-    { val: 90, rom: 'XC' },
-    { val: 50, rom: 'L' },
-    { val: 40, rom: 'XL' },
-    { val: 10, rom: 'X' },
-    { val: 9, rom: 'IX' },
-    { val: 5, rom: 'V' },
-    { val: 4, rom: 'IV' },
-    { val: 1, rom: 'I' },
+  const map = [
+    [1000, "M"],
+    [900, "CM"],
+    [500, "D"],
+    [400, "CD"],
+    [100, "C"],
+    [90, "XC"],
+    [50, "L"],
+    [40, "XL"],
+    [10, "X"],
+    [9, "IX"],
+    [5, "V"],
+    [4, "IV"],
+    [1, "I"]
   ];
 
-  let resultado = '';
-  for (const {val, rom} of valores) {
-    while (num >= val) {
-      resultado += rom;
-      num -= val;
+  let result = "";
+  let n = num;
+
+  for (let [value, letter] of map) {
+    while (n >= value) {
+      result += letter;
+      n -= value;
     }
   }
 
-  return resultado;
-}
+  res.status(200).json({ romano: result });
+};
 
-module.exports = arabigoARomano;

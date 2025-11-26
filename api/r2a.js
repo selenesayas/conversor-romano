@@ -1,22 +1,20 @@
-function romanoAArabigo(romano) {
-  if (typeof romano !== 'string' || romano.length === 0) throw new Error("Debe ser string no vacío");
+module.exports = (req, res) => {
+  const romano = (req.query.romano || "").toUpperCase();
+  const valores = { I:1, V:5, X:10, L:50, C:100, D:500, M:1000 };
 
-  const mapa = {I:1, V:5, X:10, L:50, C:100, D:500, M:1000};
   let total = 0;
-  let prev = 0;
+  let anterior = 0;
 
   for (let i = romano.length - 1; i >= 0; i--) {
-    const val = mapa[romano[i].toUpperCase()];
-    if (!val) throw new Error("Carácter romano inválido");
+    const valor = valores[romano[i]];
+    if (!valor) return res.status(400).json({ error: "Romano inválido" });
 
-    if (val < prev) total -= val;
-    else total += val;
+    if (valor < anterior) total -= valor;
+    else total += valor;
 
-    prev = val;
+    anterior = valor;
   }
 
-  return total;
-}
-
-module.exports = romanoAArabigo;
+  res.status(200).json({ arabigo: total });
+};
 

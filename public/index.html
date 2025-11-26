@@ -30,7 +30,7 @@
     async function convertirArabigo() {
       const num = document.getElementById('numArabigo').value;
       try {
-        const res = await fetch(`/a2r/${num}`);
+        const res = await fetch(`/a2r?num=${num}`);
         const data = await res.json();
         if (data.error) {
           document.getElementById('resultadoArabigo').textContent = data.error;
@@ -45,12 +45,12 @@
     async function convertirRomano() {
       const romano = document.getElementById('numRomano').value;
       try {
-        const res = await fetch(`/r2a/${romano}`);
+        const res = await fetch(`/r2a?romano=${romano}`);
         const data = await res.json();
         if (data.error) {
           document.getElementById('resultadoRomano').textContent = data.error;
         } else {
-          document.getElementById('resultadoRomano').textContent = data.numero;
+          document.getElementById('resultadoRomano').textContent = data.arabigo;
         }
       } catch(err) {
         document.getElementById('resultadoRomano').textContent = 'Error en la conversión';
