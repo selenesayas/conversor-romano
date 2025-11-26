@@ -2,9 +2,9 @@
   "version": 2,
   "routes": [
     { "src": "/a2r", "dest": "/api/a2r.js" },
-    { "src": "/r2a", "dest": "/api/r2a.js" },
-    { "src": "/", "dest": "/index.html" }
+    { "src": "/r2a", "dest": "/api/r2a.js" }
   ]
 }
+
 
 
