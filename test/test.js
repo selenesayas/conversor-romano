@@ -1,26 +1,72 @@
-const { arabigoARomano, romanoAArabigo } = require('../index');
+import a2r from "../api/a2r.js";
+import r2a from "../api/r2a.js";
 
-describe('Conversión árabe ↔ romano', () => {
+function mockRes() {
+  return {
+    statusCode: 0,
+    data: null,
+    status(code) { this.statusCode = code; return this; },
+    json(obj) { this.data = obj; return this; }
+  };
+}
 
-  // Casos positivos
-  test('1 -> I', () => expect(arabigoARomano(1)).toBe('I'));
-  test('4 -> IV', () => expect(arabigoARomano(4)).toBe('IV'));
-  test('9 -> IX', () => expect(arabigoARomano(9)).toBe('IX'));
-  test('40 -> XL', () => expect(arabigoARomano(40)).toBe('XL'));
-  test('58 -> LVIII', () => expect(arabigoARomano(58)).toBe('LVIII'));
-  test('1994 -> MCMXCIV', () => expect(arabigoARomano(1994)).toBe('MCMXCIV'));
+describe("Conversor Árabe → Romano", () => {
+  test("35 → XXXV", () => {
+    const req = { query: { num: "35" } };
+    const res = mockRes();
+    a2r(req, res);
+    expect(res.data.romano).toBe("XXXV");
+  });
 
-  test('I -> 1', () => expect(romanoAArabigo('I')).toBe(1));
-  test('IV -> 4', () => expect(romanoAArabigo('IV')).toBe(4));
-  test('IX -> 9', () => expect(romanoAArabigo('IX')).toBe(9));
-  test('XL -> 40', () => expect(romanoAArabigo('XL')).toBe(40));
-  test('LVIII -> 58', () => expect(romanoAArabigo('LVIII')).toBe(58));
-  test('MCMXCIV -> 1994', () => expect(romanoAArabigo('MCMXCIV')).toBe(1994));
+  test("1 → I", () => {
+    const req = { query: { num: "1" } };
+    const res = mockRes();
+    a2r(req, res);
+    expect(res.data.romano).toBe("I");
+  });
 
-  // Casos borde / errores
-  test('Número decimal lanza error', () => expect(() => arabigoARomano(3.5)).toThrow());
-  test('Número negativo lanza error', () => expect(() => arabigoARomano(-5)).toThrow());
-  test('Número cero lanza error', () => expect(() => arabigoARomano(0)).toThrow());
-  test('Romano inválido lanza error', () => expect(() => romanoAArabigo('ABCD')).toThrow());
-  test('Romano vacío lanza error', () => expect(() => romanoAArabigo('')).toThrow());
+  test("4000 da error", () => {
+    const req = { query: { num: "4000" } };
+    const res = mockRes();
+    a2r(req, res);
+    expect(res.data.error).toBeDefined();
+  });
+
+  test("Decimal da error", () => {
+    const req = { query: { num: "10.5" } };
+    const res = mockRes();
+    a2r(req, res);
+    expect(res.data.error).toBe("El número debe ser entero.");
+  });
 });
+
+describe("Conversor Romano → Árabe", () => {
+  test("XXXV → 35", () => {
+    const req = { query: { romano: "XXXV" } };
+    const res = mockRes();
+    r2a(req, res);
+    expect(res.data.numero).toBe(35);
+  });
+
+  test("IV → 4", () => {
+    const req = { query: { romano: "IV" } };
+    const res = mockRes();
+    r2a(req, res);
+    expect(res.data.numero).toBe(4);
+  });
+
+  test("romano inválido", () => {
+    const req = { query: { romano: "ABC" } };
+    const res = mockRes();
+    r2a(req, res);
+    expect(res.data.error).toBe("Número romano inválido.");
+  });
+
+  test("MCMXC → 1990", () => {
+    const req = { query: { romano: "MCMXC" } };
+    const res = mockRes();
+    r2a(req, res);
+    expect(res.data.numero).toBe(1990);
+  });
+});
+

@@ -1,33 +1,49 @@
-<script>
-  async function convertirArabigo() {
-    const num = document.getElementById('numArabigo').value;
-    try {
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Conversor Números Romanos ↔ Arábigos</title>
+  <style>
+    body { font-family: Arial; text-align:center; margin-top:50px; background:#fafafa; }
+    h1 { color:#333; }
+    input, button { font-size:16px; padding:10px; margin:5px; }
+    .box { background:white; padding:20px; margin:20px auto; width:300px; border-radius:10px; box-shadow:0 0 10px #ccc; }
+    #resultadoArabigo, #resultadoRomano { margin-top:10px; font-weight:bold; }
+  </style>
+</head>
+
+<body>
+  <h1>Conversor Romano ↔ Árabe</h1>
+
+  <div class="box">
+    <h3>Árabe → Romano</h3>
+    <input id="numArabigo" type="number" placeholder="Ingresa número">
+    <button onclick="convertirArabigo()">Convertir</button>
+    <div id="resultadoArabigo"></div>
+  </div>
+
+  <div class="box">
+    <h3>Romano → Árabe</h3>
+    <input id="numRomano" type="text" placeholder="Ingresa número romano">
+    <button onclick="convertirRomano()">Convertir</button>
+    <div id="resultadoRomano"></div>
+  </div>
+
+  <script>
+    async function convertirArabigo() {
+      const num = document.getElementById("numArabigo").value;
       const res = await fetch(`/api/a2r?num=${num}`);
       const data = await res.json();
-
-      if (data.error) {
-        document.getElementById('resultadoArabigo').textContent = data.error;
-      } else {
-        document.getElementById('resultadoArabigo').textContent = data.romano;
-      }
-    } catch(err) {
-      document.getElementById('resultadoArabigo').textContent = 'Error en la conversión';
+      document.getElementById("resultadoArabigo").textContent = data.error || data.romano;
     }
-  }
 
-  async function convertirRomano() {
-    const romano = document.getElementById('numRomano').value;
-    try {
+    async function convertirRomano() {
+      const romano = document.getElementById("numRomano").value;
       const res = await fetch(`/api/r2a?romano=${romano}`);
       const data = await res.json();
-
-      if (data.error) {
-        document.getElementById('resultadoRomano').textContent = data.error;
-      } else {
-        document.getElementById('resultadoRomano').textContent = data.numero;
-      }
-    } catch(err) {
-      document.getElementById('resultadoRomano').textContent = 'Error en la conversión';
+      document.getElementById("resultadoRomano").textContent = data.error || data.numero;
     }
-  }
-</script>
+  </script>
+</body>
+</html>
+
