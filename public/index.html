@@ -1,35 +1,34 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Conversor Números Romanos ↔ Arábigos</title>
-</head>
-<body>
-  <h1>Conversor</h1>
-
-  <h3>Árabe → Romano</h3>
-  <input id="arab" type="number">
-  <button onclick="convA2R()">Convertir</button>
-  <div id="resA2R"></div>
-
-  <h3>Romano → Árabe</h3>
-  <input id="rom" type="text">
-  <button onclick="convR2A()">Convertir</button>
-  <div id="resR2A"></div>
-
 <script>
-async function convA2R() {
-  const n = document.getElementById("arab").value;
-  const res = await fetch(`/api/a2r?arabic=${n}`);
-  document.getElementById("resA2R").innerHTML = JSON.stringify(await res.json());
-}
+  async function convertirArabigo() {
+    const num = document.getElementById('numArabigo').value;
+    try {
+      const res = await fetch(`/a2r?arabic=${num}`);
+      const data = await res.json();
 
-async function convR2A() {
-  const r = document.getElementById("rom").value;
-  const res = await fetch(`/api/r2a?roman=${r}`);
-  document.getElementById("resR2A").innerHTML = JSON.stringify(await res.json());
-}
+      if (!res.ok) {
+        document.getElementById('resultadoArabigo').textContent = data.error;
+      } else {
+        document.getElementById('resultadoArabigo').textContent = data.roman;
+      }
+    } catch(err) {
+      document.getElementById('resultadoArabigo').textContent = 'Error en la conversión';
+    }
+  }
+
+  async function convertirRomano() {
+    const romano = document.getElementById('numRomano').value;
+    try {
+      const res = await fetch(`/r2a?roman=${romano}`);
+      const data = await res.json();
+
+      if (!res.ok) {
+        document.getElementById('resultadoRomano').textContent = data.error;
+      } else {
+        document.getElementById('resultadoRomano').textContent = data.arabic;
+      }
+    } catch(err) {
+      document.getElementById('resultadoRomano').textContent = 'Error en la conversión';
+    }
+  }
 </script>
 
-</body>
-</html>
