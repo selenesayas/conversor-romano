@@ -1,35 +1,28 @@
 export default function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Origin", "*"); // CORS
+  res.setHeader("Access-Control-Allow-Methods", "GET");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  const { roman } = req.query;
+  if (req.method === "OPTIONS") return res.status(200).end();
 
-  if (!roman || typeof roman !== "string") {
-    return res.status(400).json({ error: "Parámetro 'roman' inválido" });
+  const roman = (req.query.roman || "").toUpperCase();
+
+  if (!roman || !/^[MDCLXVI]+$/i.test(roman)) {
+    return res.status(400).json({ error: "Romano inválido" });
   }
 
-  const valores = {
-    I: 1, V: 5, X: 10, L: 50,
-    C: 100, D: 500, M: 1000
-  };
-
+  const map = { M:1000, D:500, C:100, L:50, X:10, V:5, I:1 };
   let total = 0;
-  let prev = 0;
 
-  for (let i = roman.length - 1; i >= 0; i--) {
-    const letra = roman[i].toUpperCase();
-    const valor = valores[letra];
+  for (let i = 0; i < roman.length; i++) {
+    const actual = map[roman[i]];
+    const siguiente = map[roman[i + 1]] || 0;
 
-    if (!valor) {
-      return res.status(400).json({ error: "Número romano inválido" });
-    }
-
-    if (valor < prev) total -= valor;
-    else total += valor;
-
-    prev = valor;
+    if (actual < siguiente) total -= actual;
+    else total += actual;
   }
 
-  res.status(200).json({ arabic: total });
+  return res.status(200).json({ arabic: total });
 }
 
 

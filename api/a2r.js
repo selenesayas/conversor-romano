@@ -1,41 +1,33 @@
 export default function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Origin", "*"); // CORS
+  res.setHeader("Access-Control-Allow-Methods", "GET");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  const { arabic } = req.query;
+  if (req.method === "OPTIONS") return res.status(200).end();
 
-  if (!arabic || isNaN(arabic)) {
-    return res.status(400).json({ error: "Parámetro 'arabic' inválido" });
+  const arabic = parseInt(req.query.arabic);
+
+  if (!arabic || arabic < 1 || arabic > 3999) {
+    return res.status(400).json({ error: "Número inválido" });
   }
 
-  let num = parseInt(arabic);
-  if (num <= 0 || num >= 4000) {
-    return res.status(400).json({ error: "Número fuera de rango (1-3999)" });
-  }
-
-  const valores = [
-    { valor: 1000, simbolo: "M" },
-    { valor: 900, simbolo: "CM" },
-    { valor: 500, simbolo: "D" },
-    { valor: 400, simbolo: "CD" },
-    { valor: 100, simbolo: "C" },
-    { valor: 90, simbolo: "XC" },
-    { valor: 50, simbolo: "L" },
-    { valor: 40, simbolo: "XL" },
-    { valor: 10, simbolo: "X" },
-    { valor: 9, simbolo: "IX" },
-    { valor: 5, simbolo: "V" },
-    { valor: 4, simbolo: "IV" },
-    { valor: 1, simbolo: "I" }
+  const map = [
+    [1000, "M"], [900, "CM"], [500, "D"], [400, "CD"],
+    [100, "C"], [90, "XC"], [50, "L"], [40, "XL"],
+    [10, "X"], [9, "IX"], [5, "V"], [4, "IV"], [1, "I"]
   ];
 
-  let romano = "";
-  valores.forEach(item => {
-    while (num >= item.valor) {
-      romano += item.simbolo;
-      num -= item.valor;
-    }
-  });
+  let result = "";
+  let num = arabic;
 
-  res.status(200).json({ roman: romano });
+  for (const [value, letter] of map) {
+    while (num >= value) {
+      result += letter;
+      num -= value;
+    }
+  }
+
+  return res.status(200).json({ roman: result });
 }
+
 
