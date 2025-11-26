@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Conversor Números Romanos ↔ Arábigos</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+    input, button { font-size: 1rem; padding: 5px; margin: 5px; }
+    #resultadoArabigo, #resultadoRomano { margin-top: 20px; font-weight: bold; }
+  </style>
+</head>
+
+<body>
+  <h1>Conversor Números Romanos ↔ Arábigos</h1>
+
+  <div>
+    <h3>Árabe → Romano</h3>
+    <input id="numArabigo" type="number" placeholder="Ingresa número">
+    <button onclick="convertirArabigo()">Convertir</button>
+    <div id="resultadoArabigo"></div>
+  </div>
+
+  <div>
+    <h3>Romano → Árabe</h3>
+    <input id="numRomano" type="text" placeholder="Ingresa número romano">
+    <button onclick="convertirRomano()">Convertir</button>
+    <div id="resultadoRomano"></div>
+  </div>
+
+  <script>
+    async function convertirArabigo() {
+      const num = document.getElementById('numArabigo').value;
+      try {
+        const res = await fetch(`/a2r?arabic=${num}`);
+        const data = await res.json();
+
+        if (!res.ok) {
+          document.getElementById('resultadoArabigo').textContent = data.error;
+        } else {
+          document.getElementById('resultadoArabigo').textContent = data.roman;
+        }
+      } catch(err) {
+        document.getElementById('resultadoArabigo').textContent = 'Error en la conversión';
+      }
+    }
+
+    async function convertirRomano() {
+      const romano = document.getElementById('numRomano').value;
+      try {
+        const res = await fetch(`/r2a?roman=${romano}`);
+        const data = await res.json();
+
+        if (!res.ok) {
+          document.getElementById('resultadoRomano').textContent = data.error;
+        } else {
+          document.getElementById('resultadoRomano').textContent = data.arabic;
+        }
+      } catch(err) {
+        document.getElementById('resultadoRomano').textContent = 'Error en la conversión';
+      }
+    }
+  </script>
+</body>
+</html>
+
