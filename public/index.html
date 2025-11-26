@@ -3,47 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <title>Conversor Números Romanos ↔ Arábigos</title>
-  <style>
-    body { font-family: Arial; text-align:center; margin-top:50px; background:#fafafa; }
-    h1 { color:#333; }
-    input, button { font-size:16px; padding:10px; margin:5px; }
-    .box { background:white; padding:20px; margin:20px auto; width:300px; border-radius:10px; box-shadow:0 0 10px #ccc; }
-    #resultadoArabigo, #resultadoRomano { margin-top:10px; font-weight:bold; }
-  </style>
 </head>
-
 <body>
-  <h1>Conversor Romano ↔ Árabe</h1>
+  <h1>Conversor</h1>
 
-  <div class="box">
-    <h3>Árabe → Romano</h3>
-    <input id="numArabigo" type="number" placeholder="Ingresa número">
-    <button onclick="convertirArabigo()">Convertir</button>
-    <div id="resultadoArabigo"></div>
-  </div>
+  <h3>Árabe → Romano</h3>
+  <input id="arab" type="number">
+  <button onclick="convA2R()">Convertir</button>
+  <div id="resA2R"></div>
 
-  <div class="box">
-    <h3>Romano → Árabe</h3>
-    <input id="numRomano" type="text" placeholder="Ingresa número romano">
-    <button onclick="convertirRomano()">Convertir</button>
-    <div id="resultadoRomano"></div>
-  </div>
+  <h3>Romano → Árabe</h3>
+  <input id="rom" type="text">
+  <button onclick="convR2A()">Convertir</button>
+  <div id="resR2A"></div>
 
-  <script>
-    async function convertirArabigo() {
-      const num = document.getElementById("numArabigo").value;
-      const res = await fetch(`/api/a2r?num=${num}`);
-      const data = await res.json();
-      document.getElementById("resultadoArabigo").textContent = data.error || data.romano;
-    }
+<script>
+async function convA2R() {
+  const n = document.getElementById("arab").value;
+  const res = await fetch(`/api/a2r?arabic=${n}`);
+  document.getElementById("resA2R").innerHTML = JSON.stringify(await res.json());
+}
 
-    async function convertirRomano() {
-      const romano = document.getElementById("numRomano").value;
-      const res = await fetch(`/api/r2a?romano=${romano}`);
-      const data = await res.json();
-      document.getElementById("resultadoRomano").textContent = data.error || data.numero;
-    }
-  </script>
+async function convR2A() {
+  const r = document.getElementById("rom").value;
+  const res = await fetch(`/api/r2a?roman=${r}`);
+  document.getElementById("resR2A").innerHTML = JSON.stringify(await res.json());
+}
+</script>
+
 </body>
 </html>
-

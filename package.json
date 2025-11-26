@@ -2,11 +2,6 @@
   "name": "conversor-romano",
   "version": "1.0.0",
   "scripts": {
-    "test": "jest",
-    "start": "vercel dev"
-  },
-  "type": "module",
-  "devDependencies": {
-    "jest": "^29.7.0"
+    "build": "echo 'no build needed'"
   }
 }

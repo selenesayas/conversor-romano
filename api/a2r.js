@@ -1,44 +1,41 @@
 export default function handler(req, res) {
-  let { num } = req.query;
+  res.setHeader("Access-Control-Allow-Origin", "*");
 
-  if (!num) {
-    return res.status(400).json({ error: "Debes enviar un número en ?num=" });
+  const { arabic } = req.query;
+
+  if (!arabic || isNaN(arabic)) {
+    return res.status(400).json({ error: "Parámetro 'arabic' inválido" });
   }
 
-  num = Number(num);
-
-  if (!Number.isInteger(num)) {
-    return res.status(400).json({ error: "El número debe ser entero." });
-  }
-
-  if (num < 1 || num > 3999) {
-    return res.status(400).json({ error: "Debe estar entre 1 y 3999." });
+  let num = parseInt(arabic);
+  if (num <= 0 || num >= 4000) {
+    return res.status(400).json({ error: "Número fuera de rango (1-3999)" });
   }
 
   const valores = [
-    { valor: 1000, letra: "M" },
-    { valor: 900, letra: "CM" },
-    { valor: 500, letra: "D" },
-    { valor: 400, letra: "CD" },
-    { valor: 100, letra: "C" },
-    { valor: 90, letra: "XC" },
-    { valor: 50, letra: "L" },
-    { valor: 40, letra: "XL" },
-    { valor: 10, letra: "X" },
-    { valor: 9, letra: "IX" },
-    { valor: 5, letra: "V" },
-    { valor: 4, letra: "IV" },
-    { valor: 1, letra: "I" }
+    { valor: 1000, simbolo: "M" },
+    { valor: 900, simbolo: "CM" },
+    { valor: 500, simbolo: "D" },
+    { valor: 400, simbolo: "CD" },
+    { valor: 100, simbolo: "C" },
+    { valor: 90, simbolo: "XC" },
+    { valor: 50, simbolo: "L" },
+    { valor: 40, simbolo: "XL" },
+    { valor: 10, simbolo: "X" },
+    { valor: 9, simbolo: "IX" },
+    { valor: 5, simbolo: "V" },
+    { valor: 4, simbolo: "IV" },
+    { valor: 1, simbolo: "I" }
   ];
 
-  let resultado = "";
-  valores.forEach(e => {
-    while (num >= e.valor) {
-      resultado += e.letra;
-      num -= e.valor;
+  let romano = "";
+  valores.forEach(item => {
+    while (num >= item.valor) {
+      romano += item.simbolo;
+      num -= item.valor;
     }
   });
 
-  return res.status(200).json({ romano: resultado });
+  res.status(200).json({ roman: romano });
 }
 
