@@ -3,7 +3,7 @@
   "routes": [
     { "src": "/a2r", "dest": "/api/a2r.js" },
     { "src": "/r2a", "dest": "/api/r2a.js" },
-    { "src": "/(.*)", "dest": "/public/$1" }
+    { "src": "/", "dest": "/index.html" }
   ]
 }
 
