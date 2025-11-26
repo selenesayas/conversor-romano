@@ -1,47 +1,44 @@
 export default function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  const { n } = req.query;
 
-  if (req.method === "OPTIONS") return res.status(200).end();
-
-  const value = req.query.arabic;
-
-  // ❌ No existe parámetro
-  if (!value) {
-    return res.status(400).json({ error: "Falta parámetro" });
+  // Validación: solo números enteros positivos
+  if (!/^\d+$/.test(n)) {
+    return res.status(400).json({ error: "Formato inválido: solo números enteros." });
   }
 
-  // ❌ No es número entero válido
-  if (!/^\d+$/.test(value)) {
-    return res.status(400).json({ error: "Número inválido" });
+  const num = parseInt(n, 10);
+
+  if (num < 1 || num > 3999) {
+    return res.status(400).json({ error: "Número fuera de rango (1-3999)." });
   }
 
-  const arabic = parseInt(value);
-
-  if (arabic < 1 || arabic > 3999) {
-    return res.status(400).json({ error: "Fuera de rango" });
-  }
-
-  // Conversión
-  const map = [
-    [1000, "M"], [900, "CM"], [500, "D"], [400, "CD"],
-    [100, "C"], [90, "XC"], [50, "L"], [40, "XL"],
-    [10, "X"], [9, "IX"], [5, "V"], [4, "IV"], [1, "I"]
+  const valores = [
+    { valor: 1000, simbolo: "M" },
+    { valor: 900, simbolo: "CM" },
+    { valor: 500, simbolo: "D" },
+    { valor: 400, simbolo: "CD" },
+    { valor: 100, simbolo: "C" },
+    { valor: 90, simbolo: "XC" },
+    { valor: 50, simbolo: "L" },
+    { valor: 40, simbolo: "XL" },
+    { valor: 10, simbolo: "X" },
+    { valor: 9, simbolo: "IX" },
+    { valor: 5, simbolo: "V" },
+    { valor: 4, simbolo: "IV" },
+    { valor: 1, simbolo: "I" }
   ];
 
-  let num = arabic;
-  let result = "";
+  let resultado = "";
+  let numero = num;
 
-  for (const [value, letter] of map) {
-    while (num >= value) {
-      result += letter;
-      num -= value;
+  for (const item of valores) {
+    while (numero >= item.valor) {
+      resultado += item.simbolo;
+      numero -= item.valor;
     }
   }
 
-  return res.status(200).json({ roman: result });
+  return res.status(200).json({ result: resultado });
 }
-
 
 

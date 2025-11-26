@@ -1,42 +1,50 @@
 export default function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  const { r } = req.query;
 
-  if (req.method === "OPTIONS") return res.status(200).end();
-
-  const roman = (req.query.roman || "").toUpperCase();
-
-  // ❌ parámetro vacío
-  if (!roman) {
-    return res.status(400).json({ error: "Falta parámetro" });
+  // Validación: solo letras romanas
+  if (!/^[IVXLCDM]+$/i.test(r)) {
+    return res.status(400).json({ error: "Formato inválido: solo caracteres romanos." });
   }
 
-  // ❌ caracteres inválidos
-  if (!/^[MDCLXVI]+$/i.test(roman)) {
-    return res.status(400).json({ error: "Caracter inválido" });
+  const romano = r.toUpperCase();
+
+  // Validación de repeticiones inválidas
+  if (/IIII|VV|LL|DD/.test(romano)) {
+    return res.status(400).json({ error: "Repeticiones excesivas." });
   }
 
-  // ❌ formato incorrecto (regex completa de romanos válidos)
-  const validRomanRegex = /^(M{0,3})(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$/;
+  // Validación de combinaciones inválidas
+  const reglasInvalidas = [
+    "IL", "IC", "ID", "IM",
+    "VX", "VL", "VC", "VD", "VM",
+    "XD", "XM"
+  ];
 
-  if (!validRomanRegex.test(roman)) {
-    return res.status(400).json({ error: "Romano inválido" });
+  if (reglasInvalidas.some((inv) => romano.includes(inv))) {
+    return res.status(400).json({ error: "Orden incorrecto." });
   }
 
-  // Conversión
-  const map = { M: 1000, D: 500, C: 100, L: 50, X: 10, V: 5, I: 1 };
+  const valores = {
+    I: 1, V: 5, X: 10,
+    L: 50, C: 100, D: 500, M: 1000
+  };
+
   let total = 0;
 
-  for (let i = 0; i < roman.length; i++) {
-    const actual = map[roman[i]];
-    const next = map[roman[i + 1]] || 0;
+  for (let i = 0; i < romano.length; i++) {
+    const actual = valores[romano[i]];
+    const siguiente = valores[romano[i + 1]] || 0;
 
-    if (actual < next) total -= actual;
-    else total += actual;
+    if (actual < siguiente) {
+      total += siguiente - actual;
+      i++; 
+    } else {
+      total += actual;
+    }
   }
 
-  return res.status(200).json({ arabic: total });
+  return res.status(200).json({ result: total });
 }
+
 
 
