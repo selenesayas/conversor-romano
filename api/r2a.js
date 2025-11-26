@@ -1,49 +1,31 @@
 export default function handler(req, res) {
-  const { r } = req.query;
+  const { roman } = req.query;
 
-  // Validación: solo letras romanas
-  if (!/^[IVXLCDM]+$/i.test(r)) {
+  if (!roman || !/^[IVXLCDMivxlcdm]+$/.test(roman)) {
     return res.status(400).json({ error: "Formato inválido: solo caracteres romanos." });
   }
 
-  const romano = r.toUpperCase();
-
-  // Validación de repeticiones inválidas
-  if (/IIII|VV|LL|DD/.test(romano)) {
-    return res.status(400).json({ error: "Repeticiones excesivas." });
-  }
-
-  // Validación de combinaciones inválidas
-  const reglasInvalidas = [
-    "IL", "IC", "ID", "IM",
-    "VX", "VL", "VC", "VD", "VM",
-    "XD", "XM"
-  ];
-
-  if (reglasInvalidas.some((inv) => romano.includes(inv))) {
-    return res.status(400).json({ error: "Orden incorrecto." });
-  }
-
-  const valores = {
-    I: 1, V: 5, X: 10,
-    L: 50, C: 100, D: 500, M: 1000
+  const mapa = {
+    I: 1, V: 5, X: 10, L: 50,
+    C: 100, D: 500, M: 1000
   };
 
+  const r = roman.toUpperCase();
   let total = 0;
 
-  for (let i = 0; i < romano.length; i++) {
-    const actual = valores[romano[i]];
-    const siguiente = valores[romano[i + 1]] || 0;
+  for (let i = 0; i < r.length; i++) {
+    const actual = mapa[r[i]];
+    const siguiente = mapa[r[i + 1]];
 
-    if (actual < siguiente) {
+    if (siguiente > actual) {
       total += siguiente - actual;
-      i++; 
+      i++;
     } else {
       total += actual;
     }
   }
 
-  return res.status(200).json({ result: total });
+  return res.status(200).json({ arabic: total });
 }
 
 
