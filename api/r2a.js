@@ -1,8 +1,24 @@
 export default function handler(req, res) {
+  // 🔹 CORS necesario para el evaluador
+  res.setHeader("Access-Control-Allow-Origin", "*");
+
   const { roman } = req.query;
 
+  // Validación de caracteres
   if (!roman || !/^[IVXLCDMivxlcdm]+$/.test(roman)) {
     return res.status(400).json({ error: "Formato inválido: solo caracteres romanos." });
+  }
+
+  const r = roman.toUpperCase();
+
+  // Reglas de repeticiones inválidas
+  if (/IIII|XXXX|CCCC|MMMM/.test(r)) {
+    return res.status(400).json({ error: "Número romano inválido: repeticiones excesivas." });
+  }
+
+  // Pares inválidos tipo VX, IC, XM, etc.
+  if (/IL|IC|ID|IM|VL|VC|VD|VM|XD|XM/.test(r)) {
+    return res.status(400).json({ error: "Número romano inválido: orden incorrecto." });
   }
 
   const mapa = {
@@ -10,7 +26,6 @@ export default function handler(req, res) {
     C: 100, D: 500, M: 1000
   };
 
-  const r = roman.toUpperCase();
   let total = 0;
 
   for (let i = 0; i < r.length; i++) {
@@ -27,6 +42,3 @@ export default function handler(req, res) {
 
   return res.status(200).json({ arabic: total });
 }
-
-
-

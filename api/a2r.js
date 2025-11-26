@@ -1,11 +1,15 @@
 export default function handler(req, res) {
+  // 🔹 Permitir CORS (requisito del evaluador)
+  res.setHeader("Access-Control-Allow-Origin", "*");
+
   const { arabic } = req.query;
 
-  if (!arabic || isNaN(arabic)) {
+  if (!arabic || !/^\d+$/.test(arabic)) {
     return res.status(400).json({ error: "Formato inválido: solo números enteros." });
   }
 
   const num = parseInt(arabic, 10);
+
   if (num < 1 || num > 3999) {
     return res.status(400).json({ error: "Debe ser un número entre 1 y 3999." });
   }
@@ -16,7 +20,7 @@ export default function handler(req, res) {
     [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']
   ];
 
-  let resultado = '';
+  let resultado = "";
   let restante = num;
 
   for (const [valor, simbolo] of valores) {
@@ -28,6 +32,3 @@ export default function handler(req, res) {
 
   return res.status(200).json({ roman: resultado });
 }
-
-
-
