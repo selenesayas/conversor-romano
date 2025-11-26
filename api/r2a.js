@@ -1,4 +1,9 @@
 export default function handler(req, res) {
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
   const { roman } = req.query;
 
   if (!roman || !/^[IVXLCDMivxlcdm]+$/.test(roman)) {
@@ -29,4 +34,4 @@ export default function handler(req, res) {
   }
 
   return res.status(200).json({ arabic: total });
-}
+}}
