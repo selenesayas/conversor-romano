@@ -1,26 +1,19 @@
 export default function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-
   const { roman } = req.query;
 
-  if (!roman || !/^[IVXLCDMivxlcdm]+$/.test(roman)) {
+  if (!roman) {
     return res.status(400).json({ error: "Formato inválido: solo caracteres romanos." });
   }
 
   const r = roman.toUpperCase();
 
-  // ❌ Validaciones estrictas del evaluador
-  if (/IIII|VV|XXXX|LL|CCCC|DD|MMMM/.test(r)) {
-    return res.status(400).json({ error: "Repeticiones excesivas." });
-  }
-  if (/IL|IC|ID|IM|XD|XM|VX|LC|DM/.test(r)) {
-    return res.status(400).json({ error: "Orden incorrecto." });
+  // Validación estricta de número romano válido (1-3999)
+  const regexValido = /^(M{0,3})(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$/;
+  if (!regexValido.test(r)) {
+    return res.status(400).json({ error: "Formato inválido: número romano incorrecto." });
   }
 
-  const mapa = {
-    I: 1, V: 5, X: 10, L: 50,
-    C: 100, D: 500, M: 1000
-  };
+  const mapa = { I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000 };
 
   let total = 0;
   for (let i = 0; i < r.length; i++) {
